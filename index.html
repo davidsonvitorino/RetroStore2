@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetorStore Automatizado</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ================= HEADER ================= -->
+    <header>
+        <h1><img src="image/logo.png" alt="controle de videogame"> RetoStore</h1>
+        <p>Compre seu produto Relíquia aqui mesmo!</p>
+    </header>
+
+    <div class="container">
+        <!-- ========== ADMIN ========== -->
+        <button class="btn" id="btn-admin">Modo Admin</button>
+        <!-- Modal de senha admin -->
+        <div id="modal-senha" class="modal-senha">
+            <div class="modal-senha-box">
+                <h3>Digite a senha do admin</h3>
+                <input type="password" id="input-senha-admin" placeholder="Senha" class="modal-senha-input">
+                <div>
+                    <button class="btn" id="btn-confirmar-senha">Entrar</button>
+                    <button class="btn btn-cancelar" id="btn-cancelar-senha">Cancelar</button>
+                </div>
+                <div id="msg-senha-admin" class="modal-senha-msg">Senha incorreta</div>
+            </div>
+        </div>
+
+        <!-- Formulário de Produto (Admin) -->
+        <div class="form" id="form-admin">
+            <h2>Adicionar Produto</h2>
+            <input type="text" id="nome" placeholder="Nome do produto">
+            <input type="number" id="preco" placeholder="Preço (R$)">
+            <input type="text" id="categoria" placeholder="Categoria do produto">
+            <textarea id="descricao" placeholder="Descrição do produto"></textarea>
+            <input type="file" id="imagem" accept="image/*" capture="environment">
+            <button onclick="adicionarProduto()">Salvar Produto</button>
+        </div>
+
+        <!-- ========== FILTROS DE CATEGORIA ========== -->
+        <div class="filtros" id="filtros-categorias">
+            <button class="btn" onclick="filtrarProdutos('todos')">Todos</button>
+            <button class="btn" onclick="filtrarProdutos('Console')">Console</button>
+            <button class="btn" onclick="filtrarProdutos('Cartucho')">Cartucho</button>
+            <button class="btn" onclick="filtrarProdutos('Jogos')">Jogos</button>
+        </div>
+
+        <!-- ========== LISTA DE PRODUTOS ========== -->
+        <h2>Produtos</h2>
+        <div class="grid" id="lista"></div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
