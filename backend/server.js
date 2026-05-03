@@ -165,6 +165,6 @@ app.delete('/produtos/:id', (req, res) => {
 const PORT = 3000;
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`Servidor rodando em http://192.168.18.10:${PORT}`);
 });
 

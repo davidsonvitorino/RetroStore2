@@ -1,7 +1,7 @@
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
 
-fetch(`http://localhost:3000/produtos`)
+fetch(`http://192.168.18.10:3000/produtos`)
     .then(res => res.json())
     .then(produtos => {
 
@@ -15,7 +15,7 @@ fetch(`http://localhost:3000/produtos`)
 
         container.innerHTML = `
         <div class="card">
-            <img src="http://localhost:3000/uploads/${produto.imagem}" style="width:100%; max-width:300px; display:block; margin:auto;">
+            <img src="http://192.168.18.10:3000/uploads/${produto.imagem}" style="width:100%; max-width:300px; display:block; margin:auto;">
             
             <div class="card-content">
                 <h2>${produto.nome}</h2>
