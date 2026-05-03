@@ -1,5 +1,5 @@
 // ================= CONFIG =================
-const API = 'http://localhost:3000/produtos';
+const API = 'http://192.168.18.10:3000/produtos';
 
 // ================= CARREGAR PRODUTOS =================
 function carregarProdutos() {
@@ -17,7 +17,7 @@ function carregarProdutos() {
                 card.innerHTML = `
                     <!-- Mostra imagem vindo do backend -->
 
-                    <img src="http://localhost:3000/uploads/${prod.imagem}?t=${Date.now()}" width="120"/>
+                    <img src="http://192.168.18.10:3000/uploads/${prod.imagem}?t=${Date.now()}" width="120"/>
                     
                     <h3>${prod.nome}</h3>
                     <p>R$ ${prod.preco}</p>
@@ -96,7 +96,7 @@ function adicionarProduto() {
     formData.append('categoria', categoria);
     formData.append('descricao', descricao);
     // Envia para o backend (POST)
-    fetch('http://localhost:3000/produtos', {
+    fetch('http://192.168.18.10:3000/produtos', {
         method: 'POST',
         body: formData
     })
@@ -124,7 +124,7 @@ function filtrarProdutos(categoria) {
             
 
             card.innerHTML = `
-            <img src="http://localhost:3000/uploads/${prod.imagem}" width="120"/>
+            <img src="http://192.168.18.10:3000/uploads/${prod.imagem}" width="120"/>
             <h3>${prod.nome}</h3>
             <p>R$ ${prod.preco}</p>
             
