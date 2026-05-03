@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Backend</title>
+</head>
+<body>
+
+<h1>Teste API</h1>
+
+<input type="text" id="nome" placeholder="Nome">
+<input type="number" id="preco" placeholder="Preço">
+
+<button onclick="enviar()">Enviar Produto</button>
+<button onclick="carregar()">Ver Produtos</button>
+
+<ul id="lista"></ul>
+
+<script>
+async function enviar() {
+  const nome = document.getElementById('nome').value;
+  const preco = document.getElementById('preco').value;
+
+  const resposta = await fetch('http://localhost:3000/produtos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ nome, preco })
+  });
+
+  const dados = await resposta.json();
+  console.log("Enviado:", dados);
+}
+
+async function carregar() {
+  const resposta = await fetch('http://localhost:3000/produtos');
+  const dados = await resposta.json();
+
+  const lista = document.getElementById('lista');
+  lista.innerHTML = '';
+
+  dados.forEach(p => {
+    const li = document.createElement('li');
+    li.textContent = `${p.nome} - R$ ${p.preco}`;
+    lista.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,197 +1,192 @@
+// ================= CONFIG =================
+const API = 'http://localhost:3000/produtos';
 
-// ================= VARIÁVEIS GLOBAIS =================
-let produtos = JSON.parse(localStorage.getItem('produtos')) || [];
-let indexEditando = null;
-const SENHA_ADMIN = '1234';
+// ================= CARREGAR PRODUTOS =================
+function carregarProdutos() {
+    fetch(API)
+        .then(res => res.json())
+        .then(produtos => {
 
-// ================= FUNÇÕES DE PERSISTÊNCIA =================
-// Salva os produtos no localStorage
-function salvar() {
-    localStorage.setItem('produtos', JSON.stringify(produtos));
-}
+            const lista = document.getElementById('lista');
+            lista.innerHTML = '';
 
-// Renderiza todos os produtos na tela
-function renderizar() {
-    const lista = document.getElementById('lista');
-    lista.innerHTML = '';
+            produtos.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'card';
 
-    produtos.forEach((prod, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
+                card.innerHTML = `
+                    <!-- Mostra imagem vindo do backend -->
 
-        card.innerHTML = `
-        <img src="${prod.img}" class="link-produto" data-id="${prod.id}">
-        <div class="card-content">
-            <h3 class="link-produto" data-id="${prod.id}">${prod.nome}</h3>
-            <p>R$ ${prod.preco}</p>
-            <p><strong>Categoria:</strong> ${prod.categoria}</p>
-            <a class="btn" href="https://wa.me/55993333407?text=Tenho interesse em ${prod.nome}">Comprar</a>
-            <button class="btn" onclick="remover(${index})">Excluir</button>
-            <button class="btn" onclick="editarProduto(${index})">Editar</button>
-        </div>
-        `;
-        // Evento para abrir detalhes ao clicar na imagem ou nome
-        card.querySelectorAll('.link-produto').forEach(el => {
-            el.addEventListener('click', () => {
-                const id = el.getAttribute('data-id');
-                window.location.href = `produto.html?id=${id}`;
+                    <img src="http://localhost:3000/uploads/${prod.imagem}?t=${Date.now()}" width="120"/>
+                    
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco}</p>
+                    <p>${prod.descricao}</p>
+
+                    <button onclick="editar(${prod.id}, '${prod.nome}', '${prod.preco}')">Editar</button>
+
+                    <button onclick="excluir(${prod.id})">Excluir</button>
+                `;
+
+                lista.appendChild(card);
             });
-        });
-        lista.appendChild(card);
-    });
+        })
+        .catch(err => console.error('Erro ao carregar:', err));
 }
 
-// Adiciona um novo produto à lista
-function adicionarProduto() {
-    const nome = document.getElementById('nome').value;
-    const preco = document.getElementById('preco').value;
-    const file = document.getElementById('imagem').files[0];
-    const categoria = document.getElementById('categoria').value;
-    const descricao = document.getElementById('descricao').value;
-
-    // Validação dos campos
-    if (!nome || !preco || !file || !categoria || !descricao) {
-        alert('Preencha todos os campos');
-        return;
-    }
-
-    // Lê a imagem e salva o produto
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        produtos.push({
-            id: Date.now(),
-            nome: nome,
-            preco: preco,
-            categoria: categoria,
-            img: e.target.result,
-            descricao: descricao
-        });
-        salvar();
-        renderizar();
-        mostrarMensagem('Produto salvo com sucesso!');
-    };
-    reader.readAsDataURL(file);
-
-    // Limpa os campos do formulário
-    document.getElementById('nome').value = '';
-    document.getElementById('preco').value = '';
-    document.getElementById('imagem').value = '';
-    document.getElementById('categoria').value = '';
-    document.getElementById('descricao').value = '';
-}
-
-// Remove um produto da lista
-function remover(index) {
-    const confirmar = confirm('Tem certeza que deseja excluir este produto?');
-    if (!confirmar) return;
-    produtos.splice(index, 1);
-    salvar();
-    renderizar();
-    mostrarMensagem('Produto removido');
-}
-
-// Preenche o formulário com os dados do produto para edição
-function editarProduto(index) {
-    const produto = produtos[index];
-    document.getElementById('nome').focus();
-    document.getElementById('nome').value = produto.nome;
-    document.getElementById('preco').value = produto.preco;
-    document.getElementById('categoria').value = produto.categoria;
-    document.getElementById('descricao').value = produto.descricao || '';
-    indexEditando = index;
-    // Abre o formulário (modo admin)
-    document.getElementById('form-admin').style.display = 'block';
-    document.getElementById('btn-admin').textContent = 'Fechar Admin';
-}
-
-
-renderizar();
-
-// Filtra produtos pela categoria selecionada
-function filtrarProdutos(categoria) {
-    const lista = document.getElementById('lista');
-    lista.innerHTML = '';
-    let produtosFiltrados = [];
-    if (categoria === 'todos') {
-        produtosFiltrados = produtos;
-    } else {
-        produtosFiltrados = produtos.filter(prod => prod.categoria && prod.categoria.toLowerCase() === categoria.toLowerCase());
-    }
-    produtosFiltrados.forEach((prod, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-        <img src="${prod.img}" class="link-produto" data-id="${prod.id}">
-        <div class="card-content">
-            <h3 class="link-produto" data-id="${prod.id}">${prod.nome}</h3>
-            <p>R$ ${prod.preco}</p>
-            <p><strong>Categoria:</strong> ${prod.categoria}</p>
-            <a class="btn" href="https://wa.me/55993333407?text=Tenho interesse em ${prod.nome}">Comprar</a>
-            <button class="btn" onclick="remover(${index})">Excluir</button>
-            <button class="btn" onclick="editarProduto(${index})">Editar</button>
-        </div>
-        `;
-        // Evento para abrir detalhes ao clicar na imagem ou nome
-        card.querySelectorAll('.link-produto').forEach(el => {
-            el.addEventListener('click', () => {
-                const id = el.getAttribute('data-id');
-                window.location.href = `produto.html?id=${id}`;
-            });
-        });
-        lista.appendChild(card);
-    });
-}
-
+// ================= ADMIN =================
 
 const btnAdmin = document.getElementById('btn-admin');
-const formAdmin = document.getElementById('form-admin');
 const modalSenha = document.getElementById('modal-senha');
-const inputSenhaAdmin = document.getElementById('input-senha-admin');
 const btnConfirmarSenha = document.getElementById('btn-confirmar-senha');
 const btnCancelarSenha = document.getElementById('btn-cancelar-senha');
-const msgSenhaAdmin = document.getElementById('msg-senha-admin');
+const inputSenhaAdmin = document.getElementById('input-senha-admin');
 
+const SENHA_ADMIN = '1234';
+
+// Abrir modal
 btnAdmin.addEventListener('click', () => {
-    if (formAdmin.style.display === 'block') {
-        formAdmin.style.display = 'none';
-        btnAdmin.textContent = 'Modo Admin';
-        return;
-    }
-    // Exibe o modal de senha
     modalSenha.style.display = 'flex';
-    inputSenhaAdmin.value = '';
-    msgSenhaAdmin.style.display = 'none';
-    inputSenhaAdmin.focus();
 });
 
-btnConfirmarSenha.addEventListener('click', () => {
-    if (inputSenhaAdmin.value === SENHA_ADMIN) {
+modalSenha.addEventListener('click', (e) => {
+    if (e.target === modalSenha) {
         modalSenha.style.display = 'none';
-        formAdmin.style.display = 'block';
-        btnAdmin.textContent = 'Fechar Admin';
-        document.getElementById('nome').focus();
-    } else {
-        msgSenhaAdmin.style.display = 'block';
     }
 });
 
-btnCancelarSenha.addEventListener('click', () => {
-    modalSenha.style.display = 'none';
-});
-
-inputSenhaAdmin.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
+inputSenhaAdmin.addEventListener('keydown', (e) => {
+    if (e.key ==='Enter') {
         btnConfirmarSenha.click();
     }
 });
 
-// Exibe uma mensagem temporária na tela
+// Confirmar senha
+btnConfirmarSenha.addEventListener('click', () => {
+    if (inputSenhaAdmin.value === SENHA_ADMIN) {
+        modalSenha.style.display = 'none';
+        document.getElementById('form-admin').style.display = 'block';
+    } else {
+        alert('Senha incorreta');
+    }
+});
+
+// Cancelar
+btnCancelarSenha.addEventListener('click', () => {
+    modalSenha.style.display = 'none';
+});
+
+
+// ================= ADICIONAR =================
+function adicionarProduto() {
+
+    // Pega os dados do formulário
+    const nome = document.getElementById('nome').value;
+    const preco = document.getElementById('preco').value;
+    const imagem = document.getElementById('imagem').files[0];
+    const categoria = document.getElementById('categoriaSelect').value;
+    const descricao = document.getElementById('descricao').value;
+
+    // Cria um formulário especial para envio (FormData)
+    const formData = new FormData();
+
+    formData.append('nome', nome);
+    formData.append('preco', preco);
+    formData.append('imagem', imagem);
+    formData.append('categoria', categoria);
+    formData.append('descricao', descricao);
+    // Envia para o backend (POST)
+    fetch('http://localhost:3000/produtos', {
+        method: 'POST',
+        body: formData
+    })
+    .then(() => {
+        alert('Produto salvo com imagem!');
+        carregarProdutos(); // atualiza lista
+    })
+
+    .catch(err => console.error(err));
+}
+
+// ================= FILTRAR PRODUTOS =================
+function filtrarProdutos(categoria) {
+
+    fetch(`${API}?categoria=${categoria}`)
+        .then(res => res.json())
+        .then(produtos => {
+
+            const lista = document.getElementById('lista');
+            lista.innerHTML = '';
+
+            produtos.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'card';
+            
+
+            card.innerHTML = `
+            <img src="http://localhost:3000/uploads/${prod.imagem}" width="120"/>
+            <h3>${prod.nome}</h3>
+            <p>R$ ${prod.preco}</p>
+            
+            <button onclick="editar(${prod.id}, '${prod.nome}', '${prod.preco}')">Editar</button>
+            <button onclick="excluir(${prod.id})">Excluir</button>
+            `;
+
+            lista.appendChild(card);
+        });
+
+    });
+
+}
+
+
+// ================= EDITAR =================
+function editar(id, nomeAtual, precoAtual) {
+
+    const nome = prompt('Novo nome:', nomeAtual);
+    const preco = prompt('Novo preço:', precoAtual);
+
+    if (!nome || !preco) return;
+
+    fetch(`${API}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, preco })
+    })
+    .then(() => {
+        mostrarMensagem('Atualizado!');
+        carregarProdutos();
+    });
+}
+
+
+// ================= EXCLUIR =================
+function excluir(id) {
+
+    const confirmar = confirm('Excluir produto?');
+    if (!confirmar) return;
+
+    fetch(`${API}/${id}`, {
+        method: 'DELETE'
+    })
+    .then(() => {
+        mostrarMensagem('Excluído!');
+        carregarProdutos();
+    });
+}
+
+
+// ================= MENSAGEM =================
 function mostrarMensagem(texto) {
     const msg = document.createElement('div');
-    msg.className = 'mensagem-sucesso';
-    msg.textContent = texto;
+    msg.className = 'mensagem';
+    msg.innerText = texto;
+
     document.body.appendChild(msg);
-    setTimeout(() => {
-        msg.remove();
-    }, 2500);
+
+    setTimeout(() => msg.remove(), 2000);
 }
+
+
+// ================= INICIAR =================
+carregarProdutos();

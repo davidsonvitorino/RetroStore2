@@ -62,6 +62,7 @@ header {
     padding: 20px;
     opacity: 0.8;
 }
+
 header h1 {
     display: flex;
     align-items: center;
@@ -91,18 +92,22 @@ header h1 {
 }
 
 
-input, button, textarea {
+input, textarea {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
     box-sizing: border-box;
 }
 button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
     background: var(--accent);
     color: white;
     border: none;
+    cursor: pointer;
 }
-
 
 /* ================= LISTA DE PRODUTOS ================= */
 .grid {
@@ -131,22 +136,19 @@ button {
     padding: 10px;
 }
 
+.card p {
+    font-size: 14px;
+    color: #555;
+}
+
 
 /* ================= BOTÃO DE COMPRA ================= */
-.by-btn {
-    display: block;
-    margin-top: 10px;
-    padding: 8px;
-    background: var(--accent);
-    color: white;
-    text-align: center;
-    text-decoration: none;
-}
+
 
 
 /* ================= IMAGENS ================= */
 h1 img {
-    background: #272121 url('imagens/controle.png') no-repeat center;
+    background: #272121 url('http://localhost:3000/uploads/controle.png') no-repeat center;
     background-size: 60px;
 }
 img {
@@ -211,4 +213,8 @@ img {
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     z-index: 999;
+}
+
+button, .btn, .card img, .link-produto {
+    cursor: pointer;
 }
